@@ -41,6 +41,12 @@ const afficherTableauEtudiants = (scans) =>
       <td class="status ${scan.a_jour ? "up-to-date" : "not-up-to-date"}">
           ${scan.a_jour ? "À jour" : "Pas à jour"}
       </td>
+
+      <td style="text-align: center; font-weight: bold;" >
+      
+      ${scan.date}
+
+      </td>
         `
 
         tableBody.appendChild(row);
@@ -48,15 +54,19 @@ const afficherTableauEtudiants = (scans) =>
     });
 }
 
-//Ecoute en temps réel les modifications dans la collection "scans"
+// Écoute en temps réel les modifications dans la collection "scans"
 onSnapshot(scansCollection, (snapshot) => {
-    const scans = [];
-    snapshot.forEach((doc) => {
-        scans.push(doc.data());
-    });
+  const scans = [];
+  snapshot.forEach((doc) => {
+      scans.push(doc.data());
+  });
 
-    afficherTableauEtudiants(scans);
+  // Trier les scans par timestamp (du plus récent au plus ancien)
+  scans.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  afficherTableauEtudiants(scans);
 });
+
 
 
 
