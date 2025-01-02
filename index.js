@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"; // Pour initialiser l'application Firebase
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"; // Pour utiliser Firestore
+import { getFirestore, collection, onSnapshot, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"; // Pour utiliser Firestore
 // Configuration de votre application Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDibbuBJ2p88T26P0BAB-o_exunK0GYFdA", // Clé API de votre projet
@@ -54,19 +54,42 @@ const afficherTableauEtudiants = (scans) =>
     });
 }
 
-// Écoute en temps réel les modifications dans la collection "scans"
-onSnapshot(scansCollection, (snapshot) => {
+// Requête pour récupérer les scans triés
+const orderedScansQuery = query(scansCollection, orderBy("timestamp", "desc"));
+
+// Écoute en temps réel
+onSnapshot(orderedScansQuery, (snapshot) => {
   const scans = [];
   snapshot.forEach((doc) => {
-      scans.push(doc.data());
+    scans.push(doc.data());
   });
-
-  // Trier les scans par timestamp (du plus récent au plus ancien)
-  scans.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   afficherTableauEtudiants(scans);
 });
 
+async function clearFirestoreCollection() {
+  const collectionName = "scans"; // Remplace par le nom de ta collection
+  try {
+    const querySnapshot = await getDocs(collection(db, collectionName));
+    
+    if (querySnapshot.empty) {
+      alert("La collection est déjà vide !");
+      return;
+    }
+
+    const deletePromises = querySnapshot.docs.map((document) =>
+      deleteDoc(doc(db, collectionName, document.id))
+    );
+
+    await Promise.all(deletePromises);
+    alert(`Tous les documents de la collection '${collectionName}' ont été supprimés.`);
+  } catch (error) {
+    console.error("Erreur lors de la suppression des documents :", error);
+    alert("Une erreur est survenue. Vérifie la console pour plus de détails.");
+  }
+}
+
+document.querySelector(".delete-button").addEventListener("click", function(){clearFirestoreCollection()});
 
 
 
