@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
     <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Scann</title>
 </head>
 <body>
@@ -16,24 +18,56 @@
             <h1>CAMPUS <br><span>INSPECT</span></h1>
         </div>
     </caption>
-    <button class="delete-button">Vider la collection</button>
+    <!-- <button class="delete-button">Vider la collection</button> -->
 <br><br>
-    <table>
-        <thead>
-            <tr>
-                <th>Kairos</th>
-                <th>Nom & Prénom</th>
-                <th>Solvabilité <br>restante (/mois)</th>
-                <th>Classe</th>
-                <th>Statut</th>
-                <th>Date</th>
-            </tr>
-
+<div class="container mx-auto my-10 p-4">
+    <div class="overflow-x-auto shadow-2xl rounded-lg">
+      <table class="min-w-full bg-white rounded-lg">
+        <!-- En-tête du tableau -->
+        <thead class="bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 text-white">
+          <tr>
+            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">
+              <i class="fas fa-id-card mr-2"></i>Kairos
+            </th>
+            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">
+              <i class="fas fa-user mr-2"></i>Nom & Prénom
+            </th>
+            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">
+              <i class="fas fa-wallet mr-2"></i>Solvabilité <br>Restante (/mois)
+            </th>
+            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">
+              <i class="fas fa-chalkboard-teacher mr-2"></i>Classe
+            </th>
+            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">
+              <i class="fas fa-clipboard-check mr-2"></i>Statut
+            </th>
+            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">
+              <i class="fas fa-calendar-alt mr-2"></i>Date
+            </th>
+          </tr>
         </thead>
-        <tbody id="table-body">
-          
+  
+        <!-- Corps du tableau -->
+        <tbody id="table-body" class="divide-y divide-gray-200">
+          <!-- Les données dynamiques seront insérées ici -->
+          <tr>
+            <td colspan="6" class="py-6 px-4 text-center text-gray-500 italic">
+              <i class="fas fa-spinner fa-pulse mr-2"></i>En attente de données...
+            </td>
+          </tr>
         </tbody>
-    </table>
+      </table>
+    </div>
+  
+    <!-- Bouton pour vider la collection -->
+    <div class="flex justify-end mt-4">
+      <button class="delete-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-6 rounded shadow-lg transition-transform transform hover:scale-105">
+        <i class="fas fa-trash-alt mr-2"></i>Vider la collection
+      </button>
+    </div>
+  </div>
+  
+  
 
   <script type="module" src="./index.js"></script>
 </body>
