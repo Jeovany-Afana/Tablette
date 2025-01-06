@@ -40,9 +40,9 @@ const afficherTableauEtudiants = (scans) => {
         ${scan.a_jour ? '<i class="fas fa-check-circle text-green-500"></i> À jour' : '<i class="fas fa-times-circle text-red-500"></i> Pas à jour'}
       </td>
       <td><i class="fas fa-calendar-alt mr-2"></i>${scan.date}</td>
-      <td style="color:${scan.derogation ? "blue" : "gray"};">
+      <td style="color:${scan.derogation ? "blue" : "gray"}; font-weight: bold;">
         ${scan.derogation 
-          ? '<i class="fas fa-check-circle text-blue-500"></i>' + scan.dateDerogation  + ' '
+          ? '<i class="fas fa-check-circle text-blue-500"></i>     ' + scan.derogationDate  + ' '
           : '<i class="fas fa-times-circle text-gray-500"></i> Pas de dérogation'}
       </td>
     `;
