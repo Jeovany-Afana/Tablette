@@ -22,34 +22,35 @@ const scansCollection = collection(db, 'scans');
 
 //Fonction pour afficher les scans dans la table
 
-const afficherTableauEtudiants = (scans) => 
-{
-  // Récupérer les données de la collection "scans" dans Firestore
-    const tableBody = document.getElementById("table-body");
-    tableBody.innerHTML = ""; //Nettoie l'ancien contenu
+const afficherTableauEtudiants = (scans) => {
+  const tableBody = document.getElementById("table-body");
+  tableBody.innerHTML = ""; // Nettoie l'ancien contenu
 
+  scans.forEach((scan) => {
+    const row = document.createElement("tr");
 
-    scans.forEach((scan) => {
-        const row = document.createElement("tr");
+    row.innerHTML = `
+      <td><i class="fas fa-id-badge mr-2"></i><b>${scan.kairos}</b></td>
+      <td><i class="fas fa-user-circle mr-2"></i><b>${scan.pseudoOk.toUpperCase()}</b></td>
+      <td style="color:${scan.dureeSolvabilite > 0 ? "green" : "red"};">
+        <i class="fas fa-wallet mr-2"></i>${scan.dureeSolvabilite}
+      </td>
+      <td><i class="fas fa-chalkboard mr-2"></i>${scan.classe}</td>
+      <td class="${scan.a_jour ? "up-to-date" : "not-up-to-date"}">
+        ${scan.a_jour ? '<i class="fas fa-check-circle text-green-500"></i> À jour' : '<i class="fas fa-times-circle text-red-500"></i> Pas à jour'}
+      </td>
+      <td><i class="fas fa-calendar-alt mr-2"></i>${scan.date}</td>
+      <td style="color:${scan.derogation ? "blue" : "gray"};">
+        ${scan.derogation 
+          ? '<i class="fas fa-check-circle text-blue-500"></i>' + scan.derogationDate  + ' '
+          : '<i class="fas fa-times-circle text-gray-500"></i> Pas de dérogation'}
+      </td>
+    `;
 
-        row.innerHTML = `
-        <td><i class="fas fa-id-badge mr-2"></i><b>${scan.kairos}</b></td>
-        <td><i class="fas fa-user-circle mr-2"></i><b>${scan.pseudoOk.toUpperCase()}</b></td>
-        <td style="color:${scan.dureeSolvabilite > 0 ? "green" : "red"};">
-          <i class="fas fa-wallet mr-2"></i>${scan.dureeSolvabilite}
-        </td>
-        <td><i class="fas fa-chalkboard mr-2"></i>${scan.classe}</td>
-        <td class="${scan.a_jour ? "up-to-date" : "not-up-to-date"}">
-          ${scan.a_jour ? '<i class="fas fa-check-circle text-green-500"></i> À jour' : '<i class="fas fa-times-circle text-red-500"></i> Pas à jour'}
-        </td>
-        <td><i class="fas fa-calendar-alt mr-2"></i>${scan.date}</td>
-      `;
-      
+    tableBody.appendChild(row);
+  });
+};
 
-        tableBody.appendChild(row);
-        
-    });
-}
 
 // Requête pour récupérer les scans triés
 const orderedScansQuery = query(scansCollection, orderBy("timestamp", "desc"));
