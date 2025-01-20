@@ -3,92 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Document</title>
+    <title>Campus Inspect</title>
 </head>
 <body>
-    
-    <div class="container mx-auto my-10 p-4">
-        <div class="overflow-x-auto shadow-lg rounded-lg">
-          <table class="min-w-full bg-white rounded-lg">
-            <thead class="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 text-white">
-              <tr>
-                <th class="py-4 px-6 text-left text-sm font-medium uppercase tracking-wider">
-                  <i class="fas fa-id-card mr-2"></i>Kairos
-                </th>
-                <th class="py-4 px-6 text-left text-sm font-medium uppercase tracking-wider">
-                  <i class="fas fa-user mr-2"></i>Nom & Prénom
-                </th>
-                <th class="py-4 px-6 text-left text-sm font-medium uppercase tracking-wider">
-                  <i class="fas fa-wallet mr-2"></i>Solvabilité <br>restante (/mois)
-                </th>
-                <th class="py-4 px-6 text-left text-sm font-medium uppercase tracking-wider">
-                  <i class="fas fa-chalkboard-teacher mr-2"></i>Classe
-                </th>
-                <th class="py-4 px-6 text-left text-sm font-medium uppercase tracking-wider">
-                  <i class="fas fa-clipboard-check mr-2"></i>Statut
-                </th>
-                <th class="py-4 px-6 text-left text-sm font-medium uppercase tracking-wider">
-                  <i class="fas fa-calendar-alt mr-2"></i>Date
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr class="hover:bg-blue-50 transition duration-300">
-                <td class="py-4 px-6 text-sm font-medium text-gray-700">101</td>
-                <td class="py-4 px-6 text-sm font-medium text-gray-700">Alice Dupont</td>
-                <td class="py-4 px-6 text-sm text-gray-500">
-                  <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
-                    0 FCFA (à jour)
-                  </span>
-                </td>
-                <td class="py-4 px-6 text-sm text-gray-700">Terminale S</td>
-                <td class="py-4 px-6 text-sm">
-                  <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
-                    Actif
-                  </span>
-                </td>
-                <td class="py-4 px-6 text-sm text-gray-500">05/01/2025</td>
-              </tr>
-              <tr class="hover:bg-blue-50 transition duration-300">
-                <td class="py-4 px-6 text-sm font-medium text-gray-700">102</td>
-                <td class="py-4 px-6 text-sm font-medium text-gray-700">Jean Martin</td>
-                <td class="py-4 px-6 text-sm text-gray-500">
-                  <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">
-                    15,000 FCFA
-                  </span>
-                </td>
-                <td class="py-4 px-6 text-sm text-gray-700">1ère A</td>
-                <td class="py-4 px-6 text-sm">
-                  <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">
-                    En attente
-                  </span>
-                </td>
-                <td class="py-4 px-6 text-sm text-gray-500">04/01/2025</td>
-              </tr>
-              <tr class="hover:bg-blue-50 transition duration-300">
-                <td class="py-4 px-6 text-sm font-medium text-gray-700">103</td>
-                <td class="py-4 px-6 text-sm font-medium text-gray-700">Sophie Bernard</td>
-                <td class="py-4 px-6 text-sm text-gray-500">
-                  <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">
-                    30,000 FCFA
-                  </span>
-                </td>
-                <td class="py-4 px-6 text-sm text-gray-700">Seconde B</td>
-                <td class="py-4 px-6 text-sm">
-                  <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">
-                    Inactif
-                  </span>
-                </td>
-                <td class="py-4 px-6 text-sm text-gray-500">03/01/2025</td>
-              </tr>
-            </tbody>
-          </table>
+
+  <nav class="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 text-white shadow-lg fixed w-full top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center px-6 py-4">
+      <!-- Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="bg-white rounded-full p-2 shadow-md transform hover:scale-110 transition-transform duration-300">
+          <i class="fa-solid fa-eye text-blue-700 text-2xl"></i>
         </div>
+        <span class="text-2xl font-extrabold tracking-wide uppercase bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-500 hover:opacity-90 cursor-pointer transition-opacity duration-300">
+          Campus Inspect 
+        </span>
       </div>
+  
+     
       
-      
-      
+      </div>
+  
+    
+
+  </nav>
+<br><br>
+
+
+    <div class="container mx-auto my-10 p-4" id="main-container">
+        <!-- Les tableaux par classe seront ajoutés ici dynamiquement -->
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getFirestore, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDibbuBJ2p88T26P0BAB-o_exunK0GYFdA",
+            authDomain: "inspecteur-de-classes.firebaseapp.com",
+            projectId: "inspecteur-de-classes",
+            storageBucket: "inspecteur-de-classes.appspot.com",
+            messagingSenderId: "572661846292",
+            appId: "1:572661846292:web:aeb0374db2d414fef9f201",
+            measurementId: "G-NVN5GERDV6"
+        };
+
+        // Initialiser Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Récupérer les étudiants non à jour depuis Firestore
+        const usersCollection = collection(db, 'users');
+        const notUpToDateQuery = query(
+            usersCollection,
+            where("a_jour", "==", false),
+            orderBy("classe") // Trier par classe
+        );
+
+        // Fonction pour afficher les tableaux par classe
+        const afficherTableauxParClasse = (students) => {
+            const mainContainer = document.getElementById("main-container");
+            mainContainer.innerHTML = ""; // Réinitialiser le contenu
+
+            // Grouper les étudiants par classe
+            const studentsByClass = students.reduce((acc, student) => {
+                if (!acc[student.classe]) acc[student.classe] = [];
+                acc[student.classe].push(student);
+                return acc;
+            }, {});
+
+            // Créer un tableau pour chaque classe
+            Object.keys(studentsByClass).forEach((classe) => {
+                // Ajouter un titre pour la classe
+                const classTitle = document.createElement("h1");
+                classTitle.textContent = `Classe : ${classe}`;
+                classTitle.classList.add("text-2xl", "font-bold", "mb-4", "text-blue-700");
+                mainContainer.appendChild(classTitle);
+
+                // Ajouter un tableau pour les étudiants de cette classe
+                const table = document.createElement("table");
+                table.classList.add("min-w-full", "bg-white", "rounded-lg", "mb-10");
+
+                // Ajouter l'en-tête du tableau
+                table.innerHTML = `
+                    <thead class="bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 text-white">
+                        <tr>
+                            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Kairos</th>
+                            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Nom & Prénom</th>
+                            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Solvabilité</th>
+                            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Statut</th>
+                            <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Dérogation</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200"></tbody>
+                `;
+
+                // Ajouter les étudiants dans le tableau
+                const tableBody = table.querySelector("tbody");
+                studentsByClass[classe].forEach((student) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td class="py-4 px-6">${student.kairos}</td>
+                        <td class="py-4 px-6">${student.pseudoOk.toUpperCase()}</td>
+                        <td class="py-4 px-6" style="color:${student.dureeSolvabilite > 0 ? "green" : "red"};">
+                            ${student.dureeSolvabilite}
+                        </td>
+                        <td class="py-4 px-6">
+                            <i class="fas fa-times-circle text-red-500"></i> Pas à jour
+                        </td>
+                        <td class="py-4 px-6" style="${student.derogation ? "color: blue; font-weight: bold;" : "color: black;"}">${student.derogation ? student.derogationDate : "Aucune dérogation"}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                // Ajouter le tableau au conteneur principal
+                mainContainer.appendChild(table);
+            });
+        };
+
+        // Écoute des modifications en temps réel
+        onSnapshot(notUpToDateQuery, (snapshot) => {
+            const students = [];
+            snapshot.forEach((doc) => {
+                students.push(doc.data());
+            });
+
+            afficherTableauxParClasse(students);
+        });
+    </script>
 </body>
 </html>

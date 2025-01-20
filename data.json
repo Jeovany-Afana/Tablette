@@ -1,0 +1,17 @@
+[
+    {
+      "mois": "Décembre",
+      "total": 500,
+      "aJour": 400,
+      "pasAJour": 100,
+      "derogations": 50
+    },
+    {
+      "mois": "Janvier",
+      "total": 510,
+      "aJour": 420,
+      "pasAJour": 90,
+      "derogations": 60
+    }
+  ]
+  
