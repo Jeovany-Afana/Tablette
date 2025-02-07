@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Campus Inspect</title>
+</head>
+<body>
+
+  <nav class="bg-white text-blue-700 shadow-lg fixed w-full top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center px-6 py-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-blue-700 rounded-full p-2 shadow-md transform hover:scale-110 transition-transform duration-300">
+          <i class="fa-solid fa-eye text-white text-2xl"></i>
+        </div>
+        <span class="text-2xl font-extrabold tracking-wide uppercase bg-clip-text text-blue-700 hover:text-blue-900 cursor-pointer transition-colors duration-300">
+          Campus Inspect
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <br><br>
+
+  <div class="container mx-auto my-10 p-4" id="main-container">
+    <!-- Les tableaux par club seront ajoutés ici dynamiquement -->
+  </div>
+
+  <script type="module">
+    // Importation des fonctions Firebase nécessaires
+    import { 
+      initializeApp 
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      query, 
+      where, 
+      orderBy, 
+      onSnapshot, 
+      updateDoc, 
+      doc, 
+      getDocs 
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDibbuBJ2p88T26P0BAB-o_exunK0GYFdA",
+      authDomain: "inspecteur-de-classes.firebaseapp.com",
+      projectId: "inspecteur-de-classes",
+      storageBucket: "inspecteur-de-classes.appspot.com",
+      messagingSenderId: "572661846292",
+      appId: "1:572661846292:web:aeb0374db2d414fef9f201",
+      measurementId: "G-NVN5GERDV6"
+    };
+
+    // Initialisation Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Référence à la collection "users"
+    const usersCollection = collection(db, 'users');
+
+    // Requête pour récupérer uniquement les étudiants marqués comme présents, triés par "id_club"
+    const presentQuery = query(
+      usersCollection,
+      where("presence_club", "==", true),
+      orderBy("id_club")
+    );
+
+    // Fonction asynchrone pour charger tous les clubs dans un objet { idClub: data }
+    async function loadClubs() {
+      const clubsCollection = collection(db, "clubs");
+      const clubsSnapshot = await getDocs(clubsCollection);
+      const clubsMap = {};
+      clubsSnapshot.forEach((doc) => {
+        clubsMap[doc.id] = doc.data();
+      });
+      return clubsMap;
+    }
+
+    // Fonction pour afficher les étudiants regroupés par club
+    // Le paramètre clubsMap contient les infos de chaque club, notamment "nomClub"
+    function afficherTableauxParClub(students, clubsMap) {
+      const mainContainer = document.getElementById("main-container");
+      mainContainer.innerHTML = ""; // Réinitialiser le contenu
+
+      // Regrouper les étudiants par leur id_club
+      const studentsByClub = students.reduce((acc, student) => {
+        const clubId = student.id_club || "inconnu";
+        if (!acc[clubId]) {
+          acc[clubId] = [];
+        }
+        acc[clubId].push(student);
+        return acc;
+      }, {});
+
+      // Pour chaque club, créer un tableau
+      Object.keys(studentsByClub).forEach((clubId) => {
+        // Récupérer le nom du club à partir de clubsMap
+        const clubInfo = clubsMap[clubId];
+        const clubName = clubInfo ? clubInfo.nomClub : "Club inconnu";
+
+        // Titre pour le club
+        const clubTitle = document.createElement("h1");
+        clubTitle.textContent = `Club : ${clubName}`;
+        clubTitle.classList.add("text-2xl", "font-bold", "mb-4", "text-blue-700");
+        mainContainer.appendChild(clubTitle);
+
+        // Création du tableau pour ce club
+        const table = document.createElement("table");
+        table.classList.add("min-w-full", "bg-white", "rounded-lg", "mb-10");
+
+        table.innerHTML = `
+          <thead class="bg-gradient-to-r from-green-700 via-green-800 to-green-900 text-white">
+            <tr>
+              <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Kairos</th>
+              <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Nom & Prénom</th>
+              <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Solvabilité</th>
+              <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Statut</th>
+              <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wide">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200"></tbody>
+        `;
+
+        const tableBody = table.querySelector("tbody");
+        studentsByClub[clubId].forEach((student) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td class="py-4 px-6">${student.kairos || "N/A"}</td>
+            <td class="py-4 px-6">${student.pseudoOk ? student.pseudoOk.toUpperCase() : "Inconnu"}</td>
+            <td class="py-4 px-6" style="color:${student.nombre_presence_club > 0 ? "green" : "red"};">
+              ${student.nombre_presence_club || 0}
+            </td>
+            <td class="py-4 px-6">
+              <i class="fas fa-check-circle text-green-500"></i> Marqué par le président
+            </td>
+            <td class="py-4 px-6">
+              <button onclick="cancelPresence('${student.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                Annuler
+              </button>
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+
+        mainContainer.appendChild(table);
+      });
+    }
+
+    // Charger les clubs, puis écouter la requête en temps réel
+    loadClubs().then(clubsMap => {
+      onSnapshot(presentQuery, (snapshot) => {
+        let students = [];
+        snapshot.forEach((docSnapshot) => {
+          students.push({ id: docSnapshot.id, ...docSnapshot.data() });
+        });
+        console.log("Données récupérées :", students);
+        afficherTableauxParClub(students, clubsMap);
+      });
+    });
+
+    // Fonction globale pour annuler la présence d'un étudiant
+    window.cancelPresence = async function(id) {
+      try {
+        const userRef = doc(db, "users", id);
+        await updateDoc(userRef, { presence_club: false });
+        console.log("Présence annulée pour l'utilisateur :", id);
+      } catch (error) {
+        console.error("Erreur lors de l'annulation de la présence :", error);
+      }
+    };
+  </script>
+</body>
+</html>
